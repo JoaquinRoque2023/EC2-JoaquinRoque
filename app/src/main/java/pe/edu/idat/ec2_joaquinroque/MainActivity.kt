@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 
@@ -79,6 +80,9 @@ fun MainMenu(navController: NavController) {
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun Questionnaire(navController: NavController) {
+
+    val skills = listOf("Autoconocimiento", "Empatía", "Comunicación asertiva", "Toma de decisiones", "Pensamiento crítico", "Ninguno")
+    val selectedSkills = remember { mutableStateListOf<String>() }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -98,7 +102,7 @@ fun Questionnaire(navController: NavController) {
             ) {
                 item {
                     Text("1. Marque sus habilidades.", fontSize = 18.sp)
-                    CheckboxList(listOf("Autoconocimiento", "Empatía", "Comunicación asertiva", "Toma de decisiones", "Pensamiento crítico", "Ninguno"))
+                    CheckboxList(skills, selectedSkills)
                 }
 
                 item { Spacer(modifier = Modifier.height(16.dp)) }
@@ -145,14 +149,26 @@ fun Questionnaire(navController: NavController) {
 }
 
 @Composable
-fun CheckboxList(options: List<String>) {
-    options.forEach { option ->
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(vertical = 4.dp)
-        ) {
-            Checkbox(checked = false, onCheckedChange = {})
-            Text(text = option, fontSize = 16.sp)
+fun CheckboxList(options: List<String>, selectedOptions: MutableList<String>) {
+    Column {
+        options.forEach { option ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(vertical = 4.dp)
+            ) {
+                val isChecked = selectedOptions.contains(option)
+                Checkbox(
+                    checked = isChecked,
+                    onCheckedChange = { checked ->
+                        if (checked) {
+                            selectedOptions.add(option)
+                        } else {
+                            selectedOptions.remove(option)
+                        }
+                    }
+                )
+                Text(text = option, fontSize = 16.sp)
+            }
         }
     }
 }
